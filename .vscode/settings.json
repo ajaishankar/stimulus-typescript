@@ -1,0 +1,9 @@
+{
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+  },
+  "html.format.maxPreserveNewLines": 0,
+  "html.format.wrapAttributes": "preserve-aligned",
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

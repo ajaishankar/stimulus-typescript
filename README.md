@@ -1,0 +1,69 @@
+# Stimulus TypeScript
+
+### Strongly Typed Stimulus Controllers
+
+As awesome as Stimulus is, using [Typescript with Stimulus](https://stimulus.hotwired.dev/reference/using-typescript) can be a bit repetitive.
+
+A single `value`, `target` and `outlet` means we might need to declare a bunch of properties.
+
+```ts
+static values = {
+  code: String
+}
+
+declare codeValue: string
+declare readonly hasCodeValue: boolean
+
+static targets = [ "input" ]
+
+declare readonly hasInputTarget: boolean
+declare readonly inputTarget: HTMLInputElement
+declare readonly inputTargets: HTMLInputElement[]
+
+static outlets = [ "user-status" ]
+
+declare readonly hasUserStatusOutlet: boolean
+declare readonly userStatusOutlet: UserStatusController
+declare readonly userStatusOutlets: UserStatusController[]
+declare readonly userStatusOutletElement: Element
+declare readonly userStatusOutletElements: Element[]
+```
+
+### Enter Stimulus Typescript
+
+Stimulus Typescript uses the powerful type juggling capabilities of Typescript to automatically infer all these properties!
+
+See how it works by browsing the [code](./src/index.ts) and the [tests](./src/index.test.ts)
+
+### Usage
+
+1. Declare values as usual  
+   ```ts
+    import { ObjectAs, Typed } from "stimulus-typescript";
+
+    const values = {
+      name: String,
+      alias: Array<string>,
+      address: ObjectAs<{ street: string }>
+    }
+   ```
+2. For targets and outlets, instead of an array of strings declare a map of names to types  
+   ```ts
+    const targets = { form: HTMLFormElement }
+    const outlets = { "user-status": UserStatusController }
+   ```
+3. Derive from `Typed` controller and you're all set!  
+   ```ts
+    class MyController extends Typed(Controller, { values, targets, outlets }) {
+      // Look Ma, no "declare let ..."
+      foo() {
+        this.nameValue.split(' ')
+        this.aliasValue.map(alias => alias.toUpperCase())
+        this.addressValue.street
+        this.formTarget.submit()
+        this.userStatusOutlets.forEach(status => status.markAsSelected(event))
+      }
+    }
+   ```
+
+Give it a go and hopefully this makes your life a little bit simpler!
