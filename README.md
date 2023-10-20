@@ -5,6 +5,33 @@
 
 ### Strongly Typed Stimulus Controllers
 
+#### Quickstart
+
+```ts
+import { ObjectAs, Typed } from "stimulus-typescript";
+
+const values = {
+  name: String,
+  alias: Array<string>,
+  address: ObjectAs<{ street: string }>
+}
+
+const targets = { form: HTMLFormElement }
+
+const outlets = { "user-status": UserStatusController }
+
+class MyController extends Typed(Controller, { values, targets, outlets }) {
+  foo() {
+    this.nameValue.split(' ')
+    this.aliasValue.map(alias => alias.toUpperCase())
+    this.addressValue.street
+    this.formTarget.submit()
+    this.userStatusOutlets.forEach(status => status.markAsSelected(event))
+  }
+}
+```
+#### Why?
+
 As awesome as Stimulus is, using [Typescript with Stimulus](https://stimulus.hotwired.dev/reference/using-typescript) can be a bit repetitive.
 
 A single `value`, `target` and `outlet` means we might need to declare a bunch of properties.
@@ -32,19 +59,17 @@ declare readonly userStatusOutletElement: Element
 declare readonly userStatusOutletElements: Element[]
 ```
 
-### Enter Stimulus Typescript
+#### Stimulus Typescript
 
 Stimulus Typescript uses the powerful type juggling capabilities of Typescript to automatically infer all these properties!
 
 See how it works by browsing the [code](./src/index.ts) and the [tests](./src/index.test.ts)
 
-### Usage
+#### Usage
 
 1. Declare values as usual  
    
    ```ts
-    import { ObjectAs, Typed } from "stimulus-typescript";
-
     const values = {
       name: String,
       alias: Array<string>,
@@ -61,7 +86,7 @@ See how it works by browsing the [code](./src/index.ts) and the [tests](./src/in
    
    ```ts
     class MyController extends Typed(Controller, { values, targets, outlets }) {
-      // Look Ma, no "declare let ..."
+      // Look Ma, no "declare ..."
       foo() {
         this.nameValue.split(' ')
         this.aliasValue.map(alias => alias.toUpperCase())
