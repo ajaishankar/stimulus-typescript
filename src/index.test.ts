@@ -5,6 +5,10 @@ import { ObjectAs, Typed } from ".";
 
 class UserStatusController extends Typed(Controller<HTMLLIElement>, {}) {}
 
+interface CustomHTMLElement extends HTMLElement {
+  customProp: true;
+}
+
 const values = {
   name: String,
   age: { type: Number, default: 1 },
@@ -12,7 +16,10 @@ const values = {
   alias: Array<string>,
   address: ObjectAs<{ street: string }>,
 };
-const targets = { form: HTMLFormElement };
+const targets = {
+  form: HTMLFormElement,
+  custom: TargetAs<CustomHTMLElement>,
+};
 const outlets = { "user-status": UserStatusController };
 
 class TypecheckController extends Typed(Controller, { values, targets, outlets }) {
@@ -51,6 +58,15 @@ class TypecheckController extends Typed(Controller, { values, targets, outlets }
     expect(target).toBeTruthy();
     expect(targets.length).toBe(1);
     expect(target).toBeInstanceOf(HTMLFormElement);
+
+    const customExists: boolean = this.hasCustomTarget;
+    const customTarget: CustomHTMLElement = this.customTarget;
+    const customTargets: CustomHTMLElement[] = this.customTargets;
+
+    expect(customExists).toBe(true);
+    expect(customTarget).toBeTruthy();
+    expect(customTargets.length).toBe(1);
+    expect(customTarget).toBeInstanceOf(HTMLElement);
   }
 
   checkOutlets() {
@@ -99,6 +115,7 @@ const html = `
         <li data-controller="user-status" class="user-status"></li>
       </ul>
       <form data-typecheck-target="form"></form>
+      <div data-typecheck-target="custom"></div>
   </div>
 `;
 
@@ -159,4 +176,8 @@ describe("stimulus typescript", () => {
 
 it("should fix missing test coverage", () => {
   new ObjectAs();
+});
+
+it("should fix missing test coverage", () => {
+  new TargetAs();
 });

@@ -14,6 +14,19 @@ export class ObjectAs<T extends Record<string, unknown>> {
 }
 
 /**
+ * Strongly type Object targets
+ * ```ts
+ * const targets = {
+ *  address: TargetAs<HTMLElementWithSlimSelect>
+ * }
+ * ```
+ */
+export class TargetAs<T extends Element> {
+  // @ts-ignore
+  private _ = undefined;
+}
+
+/**
  * Identifier to camel case (admin--user-status to adminUserStatus)
  */
 type CamelCase<K extends string> = K extends `${infer Head}-${infer Tail}`
@@ -57,10 +70,12 @@ type TypeFromConstructor<C> = C extends StringConstructor
   ? boolean
   : C extends Constructor<infer T>
   ? T extends ObjectAs<infer O>
-    ? O
-    : Object extends T
-    ? unknown
-    : T
+  ? O
+  : T extends TargetAs<infer TA>
+  ? TA
+  : Object extends T
+  ? unknown
+  : T
   : never;
 
 /**
@@ -100,7 +115,7 @@ type ValueTypeObject = Partial<{
 type ValueTypeDefinition = ValueTypeConstant | ValueTypeObject;
 
 type TargetDefinitionMap = {
-  [token: string]: typeof Element;
+  [token: string]: typeof Element | typeof TargetAs;
 };
 
 type OutletDefinitionMap = {
