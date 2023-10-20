@@ -16,6 +16,6 @@ export default [
       },
     ],
     context: "window",
-    plugins: [resolve(), typescript()],
+    plugins: [resolve(), typescript({ removeComments: false })],
   },
 ];
