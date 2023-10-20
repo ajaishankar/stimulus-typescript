@@ -41,6 +41,7 @@ See how it works by browsing the [code](./src/index.ts) and the [tests](./src/in
 ### Usage
 
 1. Declare values as usual  
+   
    ```ts
     import { ObjectAs, Typed } from "stimulus-typescript";
 
@@ -51,11 +52,13 @@ See how it works by browsing the [code](./src/index.ts) and the [tests](./src/in
     }
    ```
 2. For targets and outlets, instead of an array of strings declare a map of names to types  
+   
    ```ts
     const targets = { form: HTMLFormElement }
     const outlets = { "user-status": UserStatusController }
    ```
 3. Derive from `Typed` controller and you're all set!  
+   
    ```ts
     class MyController extends Typed(Controller, { values, targets, outlets }) {
       // Look Ma, no "declare let ..."
