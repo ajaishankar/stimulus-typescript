@@ -1,3 +1,6 @@
+[![version(scoped)](https://img.shields.io/npm/v/stimulus-typescript.svg)](https://www.npmjs.com/package/stimulus-typescript)
+[![codecov](https://codecov.io/gh/ajaishankar/stimulus-typescript/graph/badge.svg?token=DJDS9JSC3M)](https://codecov.io/gh/ajaishankar/stimulus-typescript)
+
 # Stimulus TypeScript
 
 ### Strongly Typed Stimulus Controllers
