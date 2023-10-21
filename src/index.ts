@@ -167,8 +167,8 @@ function patchValueTypeDefinitionMap(values: ValueDefinitionMap) {
  *  alias: Array<string>,
  *  address: Object_<{ street: string }>
  * }
- * const targets = { form: HTMLFormElement }
- * const outlets = { "user-status": UserStatusController, "customSelect": Target<CustomSelect> }
+ * const targets = { form: HTMLFormElement, "select": Target<CustomSelect> }
+ * const outlets = { "user-status": UserStatusController }
  *
  * class MyController extends Typed(Controller, { values, targets, outlets }) {
  *  // Look Ma, no "declare ..."
@@ -176,7 +176,7 @@ function patchValueTypeDefinitionMap(values: ValueDefinitionMap) {
  *  this.aliasValue.map(alias => alias.toUpperCase())
  *  this.addressValue.street
  *  this.formTarget.submit()
- *  this.customSelectTarget.search();
+ *  this.selectTarget.search = "stimulus";
  *  this.userStatusOutlets.forEach(status => status.markAsSelected(event))
  * }
  * ```

@@ -98,6 +98,7 @@ See how it works by browsing the [code](./src/index.ts) and the [tests](./src/in
         this.aliasValue.map(alias => alias.toUpperCase())
         this.addressValue.street
         this.formTarget.submit()
+        this.selectTarget.search = "stimulus"
         this.userStatusOutlets.forEach(status => status.markAsSelected(event))
       }
     }
