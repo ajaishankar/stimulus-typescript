@@ -8,15 +8,20 @@
 #### Quickstart
 
 ```ts
-import { ObjectAs, Typed } from "stimulus-typescript";
+import { Object_, Target, Typed } from "stimulus-typescript";
 
 const values = {
   name: String,
   alias: Array<string>,
-  address: ObjectAs<{ street: string }>
+  address: Object_<{ street: string }>
 }
 
-const targets = { form: HTMLFormElement }
+interface CustomSelect { search: string }
+
+const targets = {
+  form: HTMLFormElement,
+  select: Target<CustomSelect>
+}
 
 const outlets = { "user-status": UserStatusController }
 
@@ -26,6 +31,7 @@ class MyController extends Typed(Controller, { values, targets, outlets }) {
     this.aliasValue.map(alias => alias.toUpperCase())
     this.addressValue.street
     this.formTarget.submit()
+    this.selectTarget.search = "stimulus"
     this.userStatusOutlets.forEach(status => status.markAsSelected(event))
   }
 }
@@ -73,13 +79,13 @@ See how it works by browsing the [code](./src/index.ts) and the [tests](./src/in
     const values = {
       name: String,
       alias: Array<string>,
-      address: ObjectAs<{ street: string }>
+      address: Object_<{ street: string }>
     }
    ```
 2. For targets and outlets, instead of an array of strings declare a map of names to types  
    
    ```ts
-    const targets = { form: HTMLFormElement }
+    const targets = { form: HTMLFormElement, select: Target<CustomSelect> }
     const outlets = { "user-status": UserStatusController }
    ```
 3. Derive from `Typed` controller and you're all set!  

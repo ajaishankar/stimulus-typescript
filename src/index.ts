@@ -146,11 +146,11 @@ function patchValueTypeDefinitionMap(values: ValueDefinitionMap) {
   const patchObject = (def: ValueTypeDefinition) => {
     if ("type" in def) {
       return {
-        type: def.type === ObjectAs ? Object : def.type,
+        type: def.type === Object_ ? Object : def.type,
         default: def.default,
       };
     } else {
-      return def === ObjectAs ? Object : def;
+      return def === Object_ ? Object : def;
     }
   };
   return Object.entries(values).reduce((result, [key, def]) => {
