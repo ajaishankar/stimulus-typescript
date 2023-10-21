@@ -1,30 +1,29 @@
 import { Context, Controller } from "@hotwired/stimulus";
 
-/**
- * Strongly type Object values
- * ```ts
- * const values = {
- *  address: ObjectAs<{ street: string }>
- * }
- * ```
- */
-export class ObjectAs<T extends Record<string, unknown>> {
+class Wrapped<T extends object> {
   // @ts-ignore
   private _ = undefined;
 }
 
 /**
- * Strongly type Object targets
+ * Strongly type Object values
  * ```ts
- * const targets = {
- *  address: TargetAs<HTMLElementWithSlimSelect>
+ * const values = {
+ *  address: Object_<{ street: string }>
  * }
  * ```
  */
-export class TargetAs<T extends Element> {
-  // @ts-ignore
-  private _ = undefined;
-}
+export const Object_ = Wrapped;
+export const ObjectAs = Object_;
+/**
+ * Strongly type custom targets
+ * ```ts
+ * const targets = {
+ *  select: Target<CustomSelect>
+ * }
+ * ```
+ */
+export const Target = Wrapped;
 
 /**
  * Identifier to camel case (admin--user-status to adminUserStatus)
@@ -69,13 +68,11 @@ type TypeFromConstructor<C> = C extends StringConstructor
   : C extends BooleanConstructor
   ? boolean
   : C extends Constructor<infer T>
-  ? T extends ObjectAs<infer O>
-  ? O
-  : T extends TargetAs<infer TA>
-  ? TA
-  : Object extends T
-  ? unknown
-  : T
+  ? T extends Wrapped<infer O>
+    ? O
+    : Object extends T
+    ? unknown
+    : T
   : never;
 
 /**
@@ -103,9 +100,9 @@ type ValueTypeConstant =
   | typeof Number
   | typeof Object
   | typeof String
-  | typeof ObjectAs<any>;
+  | typeof Object_;
 
-type ValueTypeDefault = Array<any> | boolean | number | Object | ObjectAs<any> | string;
+type ValueTypeDefault = Array<any> | boolean | number | Object | typeof Object_ | string;
 
 type ValueTypeObject = Partial<{
   type: ValueTypeConstant;
@@ -115,7 +112,7 @@ type ValueTypeObject = Partial<{
 type ValueTypeDefinition = ValueTypeConstant | ValueTypeObject;
 
 type TargetDefinitionMap = {
-  [token: string]: typeof Element | typeof TargetAs;
+  [token: string]: typeof Element | typeof Target;
 };
 
 type OutletDefinitionMap = {
@@ -143,7 +140,7 @@ type StimulusProperties<
 >;
 
 /**
- * Convert ObjectAs to ObjectConstructor before passing values to Stimulus
+ * Convert typed Object_ to ObjectConstructor before passing values to Stimulus
  */
 function patchValueTypeDefinitionMap(values: ValueDefinitionMap) {
   const patchObject = (def: ValueTypeDefinition) => {
@@ -168,17 +165,18 @@ function patchValueTypeDefinitionMap(values: ValueDefinitionMap) {
  * const values = {
  *  name: String,
  *  alias: Array<string>,
- *  address: ObjectAs<{ street: string }>
+ *  address: Object_<{ street: string }>
  * }
  * const targets = { form: HTMLFormElement }
- * const outlets = { "user-status": UserStatusController }
+ * const outlets = { "user-status": UserStatusController, "customSelect": Target<CustomSelect> }
  *
  * class MyController extends Typed(Controller, { values, targets, outlets }) {
- *  // Look Ma, no declare let ...
+ *  // Look Ma, no "declare ..."
  *  this.nameValue.split(' ')
  *  this.aliasValue.map(alias => alias.toUpperCase())
  *  this.addressValue.street
  *  this.formTarget.submit()
+ *  this.customSelectTarget.search();
  *  this.userStatusOutlets.forEach(status => status.markAsSelected(event))
  * }
  * ```

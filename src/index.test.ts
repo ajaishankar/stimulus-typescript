@@ -1,12 +1,13 @@
 import { Application, Controller } from "@hotwired/stimulus";
 import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 import { waitFor } from "@testing-library/dom";
-import { ObjectAs, Typed } from ".";
+import { Object_, Target, Typed } from ".";
 
 class UserStatusController extends Typed(Controller<HTMLLIElement>, {}) {}
 
-interface CustomHTMLElement extends HTMLElement {
-  customProp: true;
+// interface exposed by some custom element
+interface CustomSelect {
+  search: string;
 }
 
 const values = {
@@ -14,11 +15,11 @@ const values = {
   age: { type: Number, default: 1 },
   alive: Boolean,
   alias: Array<string>,
-  address: ObjectAs<{ street: string }>,
+  address: Object_<{ street: string }>,
 };
 const targets = {
   form: HTMLFormElement,
-  custom: TargetAs<CustomHTMLElement>,
+  custom: Target<CustomSelect>,
 };
 const outlets = { "user-status": UserStatusController };
 
@@ -60,13 +61,14 @@ class TypecheckController extends Typed(Controller, { values, targets, outlets }
     expect(target).toBeInstanceOf(HTMLFormElement);
 
     const customExists: boolean = this.hasCustomTarget;
-    const customTarget: CustomHTMLElement = this.customTarget;
-    const customTargets: CustomHTMLElement[] = this.customTargets;
+    const customTarget: CustomSelect = this.customTarget;
+    const customTargets: CustomSelect[] = this.customTargets;
 
     expect(customExists).toBe(true);
     expect(customTarget).toBeTruthy();
     expect(customTargets.length).toBe(1);
-    expect(customTarget).toBeInstanceOf(HTMLElement);
+    // just checking custom prop access
+    expect(customTarget.search).toBe(undefined);
   }
 
   checkOutlets() {
@@ -95,7 +97,7 @@ class TypecheckController extends Typed(Controller, { values, targets, outlets }
     expect(values["alive"]).toBe(Boolean);
     expect(values["alias"]).toBe(Array);
     expect(values["address"]).toBe(Object);
-    expect(targets).toEqual(["form"]);
+    expect(targets).toEqual(["form", "custom"]);
     expect(outlets).toEqual(["user-status"]);
   }
 }
@@ -156,7 +158,7 @@ describe("stimulus typescript", () => {
 
   it("should be able to inherit from typed controller", async () => {
     const values = {
-      planet: { type: ObjectAs<{ name: String }> },
+      planet: { type: Object_<{ name: String }> },
     };
     class Derived extends Typed(TypecheckController, { values }) {}
 
@@ -175,9 +177,5 @@ describe("stimulus typescript", () => {
 });
 
 it("should fix missing test coverage", () => {
-  new ObjectAs();
-});
-
-it("should fix missing test coverage", () => {
-  new TargetAs();
+  new Object_();
 });
