@@ -3,6 +3,11 @@ import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 import { waitFor } from "@testing-library/dom";
 import { Object_, Target, Typed } from ".";
 
+// https://stackoverflow.com/questions/55541275/typescript-check-for-the-any-type
+type NotAnyOrUnknown<T> = 0 extends T & 1 ? never : unknown extends T ? never : T;
+
+const ensureValid = <T>(value: NotAnyOrUnknown<T>) => value;
+
 class UserStatusController extends Typed(Controller<HTMLLIElement>, {}) {}
 
 // interface exposed by some custom element
@@ -25,11 +30,11 @@ const outlets = { "user-status": UserStatusController };
 
 class TypecheckController extends Typed(Controller, { values, targets, outlets }) {
   checkValues() {
-    const name: string = this.nameValue;
-    const age: number = this.ageValue;
-    const alive: boolean = this.aliveValue;
-    const alias: string = this.aliasValue[0];
-    const street: string = this.addressValue.street;
+    const name: string = ensureValid(this.nameValue);
+    const age: number = ensureValid(this.ageValue);
+    const alive: boolean = ensureValid(this.aliveValue);
+    const alias: string = ensureValid(this.aliasValue[0]);
+    const street: string = ensureValid(this.addressValue.street);
 
     expect(name).toBe("Homer Simpson");
     expect(age).toBe(39);
@@ -37,11 +42,11 @@ class TypecheckController extends Typed(Controller, { values, targets, outlets }
     expect(alias).toBe("Max Power");
     expect(street).toBe("742 Evergreen Terrace");
 
-    const a: boolean = this.hasNameValue;
-    const b: boolean = this.hasAgeValue;
-    const c: boolean = this.hasAliveValue;
-    const d: boolean = this.hasAliasValue;
-    const e: boolean = this.hasAddressValue;
+    const a: boolean = ensureValid(this.hasNameValue);
+    const b: boolean = ensureValid(this.hasAgeValue);
+    const c: boolean = ensureValid(this.hasAliveValue);
+    const d: boolean = ensureValid(this.hasAliasValue);
+    const e: boolean = ensureValid(this.hasAddressValue);
 
     expect(a).toBe(true);
     expect(b).toBe(true);
@@ -54,18 +59,18 @@ class TypecheckController extends Typed(Controller, { values, targets, outlets }
   }
 
   checkTargets() {
-    const exists: boolean = this.hasFormTarget;
-    const target: HTMLFormElement = this.formTarget;
-    const targets: HTMLFormElement[] = this.formTargets;
+    const exists: boolean = ensureValid(this.hasFormTarget);
+    const target: HTMLFormElement = ensureValid(this.formTarget);
+    const targets: HTMLFormElement[] = ensureValid(this.formTargets);
 
     expect(exists).toBe(true);
     expect(target).toBeTruthy();
     expect(targets.length).toBe(1);
     expect(target).toBeInstanceOf(HTMLFormElement);
 
-    const customExists: boolean = this.hasCustomTarget;
-    const customTarget: CustomSelect = this.customTarget;
-    const customTargets: CustomSelect[] = this.customTargets;
+    const customExists: boolean = ensureValid(this.hasCustomTarget);
+    const customTarget: CustomSelect = ensureValid(this.customTarget);
+    const customTargets: CustomSelect[] = ensureValid(this.customTargets);
 
     expect(customExists).toBe(true);
     expect(customTarget).toBeTruthy();
@@ -75,11 +80,11 @@ class TypecheckController extends Typed(Controller, { values, targets, outlets }
   }
 
   checkOutlets() {
-    const exists: boolean = this.hasUserStatusOutlet;
-    const outlet: UserStatusController = this.userStatusOutlet;
-    const outlets: UserStatusController[] = this.userStatusOutlets;
-    const element: HTMLLIElement = this.userStatusOutletElement;
-    const elements: HTMLLIElement[] = this.userStatusOutletElements;
+    const exists: boolean = ensureValid(this.hasUserStatusOutlet);
+    const outlet: UserStatusController = ensureValid(this.userStatusOutlet);
+    const outlets: UserStatusController[] = ensureValid(this.userStatusOutlets);
+    const element: HTMLLIElement = ensureValid(this.userStatusOutletElement);
+    const elements: HTMLLIElement[] = ensureValid(this.userStatusOutletElements);
 
     expect(exists).toBe(true);
     expect(outlet).toBeTruthy();
