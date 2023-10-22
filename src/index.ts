@@ -39,25 +39,27 @@ type Singular<T, Suffix extends string> = {
 };
 
 type Existential<T, Suffix extends string> = {
-  readonly [K in keyof T as `has${Capitalize<CamelCase<K & string>>}${Suffix}`]: boolean;
+  [K in keyof T as `has${Capitalize<CamelCase<K & string>>}${Suffix}`]: boolean;
 };
 
 type Plural<T, Suffix extends string> = {
-  readonly [K in keyof T as `${CamelCase<K & string>}${Suffix}s`]: T[K][];
+  [K in keyof T as `${CamelCase<K & string>}${Suffix}s`]: T[K][];
 };
 
 type Elemental<T, Suffix extends string> = {
-  readonly [K in keyof T as `${CamelCase<K & string>}${Suffix}Element`]: ElementType<T[K]>;
+  [K in keyof T as `${CamelCase<K & string>}${Suffix}Element`]: ElementType<T[K]>;
 } & {
-  readonly [K in keyof T as `${CamelCase<K & string>}${Suffix}Elements`]: ElementType<T[K]>[];
+  [K in keyof T as `${CamelCase<K & string>}${Suffix}Elements`]: ElementType<T[K]>[];
 };
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] } & {};
 
-type MagicProperties<T, Kind extends string> = Singular<T, Kind> &
-  Existential<T, Kind> &
-  (Kind extends "Target" | "Outlet" ? Plural<T, Kind> : unknown) &
-  (Kind extends "Outlet" ? Elemental<T, Kind> : unknown);
+type MagicProperties<T, Kind extends string> = (Kind extends "Value"
+  ? Singular<T, Kind>
+  : Readonly<Singular<T, Kind>>) &
+  Readonly<Existential<T, Kind>> &
+  Readonly<Kind extends "Target" | "Outlet" ? Plural<T, Kind> : unknown> &
+  Readonly<Kind extends "Outlet" ? Elemental<T, Kind> : unknown>;
 
 type Constructor<T = {}> = new (...args: any[]) => T;
 

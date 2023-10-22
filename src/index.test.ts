@@ -48,6 +48,9 @@ class TypecheckController extends Typed(Controller, { values, targets, outlets }
     expect(c).toBe(true);
     expect(d).toBe(true);
     expect(e).toBe(true);
+
+    // values should be writable
+    this.nameValue = "Max Power";
   }
 
   checkTargets() {
